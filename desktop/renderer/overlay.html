@@ -1,0 +1,23 @@
+﻿<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'">
+<link rel="stylesheet" href="../node_modules/@fontsource/exo-2/700.css">
+<style>
+  html, body { margin: 0; background: transparent; overflow: hidden; }
+  body { font: 700 17px/1.45 "Exo 2", sans-serif; padding: 6px 10px; letter-spacing: .3px;
+    /* the game's prompt text: bright fill, dark outline */
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 6px rgba(0,0,0,.8); }
+  .y { color: #f2e03a; } .c { color: #63dcf9; } .w { color: #fff; } .g { color: #3cf03c; }
+  .r { color: #ff6b5e; }
+  .bar { width: 260px; height: 5px; margin-top: 4px; background: rgba(0,0,0,.55); outline: 1px solid rgba(99,220,249,.6); }
+  .bar div { height: 100%; background: #3cf03c; box-shadow: 0 0 6px #3cf03c; }
+</style>
+</head>
+<body>
+<div id="o"></div>
+<script src="overlay.js"></script>
+</body>
+</html>
+

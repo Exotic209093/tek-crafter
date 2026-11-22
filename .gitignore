@@ -1,0 +1,16 @@
+# dependencies / build
+desktop/node_modules/
+__pycache__/
+*.pyc
+
+# runtime output
+*.log
+bot.err
+
+# screenshots: keep only the fixtures test_checks.py needs
+shots/*
+!shots/bench.png
+!shots/cb2full.png
+!shots/cblistfull.png
+!shots/map.png
+!shots/t3.png

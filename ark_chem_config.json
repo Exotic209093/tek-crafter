@@ -1,0 +1,1440 @@
+{
+  "window_title": "ARK: Survival Evolved",
+  "keys": {
+    "access": "f",
+    "use": "e",
+    "close": "esc",
+    "craft": "a",
+    "inventory": "tab"
+  },
+  "stations": [
+    {
+      "name": "CB1",
+      "layout": "chem",
+      "beds": [
+        "CB1B",
+        "CB1A"
+      ],
+      "enabled": false
+    },
+    {
+      "name": "CB2",
+      "layout": "chem",
+      "beds": [
+        "CB2C",
+        "CB2A"
+      ],
+      "enabled": false
+    },
+    {
+      "name": "F1",
+      "layout": "fab",
+      "beds": [
+        "F1A",
+        "F1B",
+        "F1C"
+      ],
+      "enabled": false
+    }
+  ],
+  "bed_targets": {
+    "CB2C": {
+      "layout": "chem",
+      "targets": [
+        {
+          "yaw": -1950,
+          "pitch": 1050,
+          "anchor": [
+            -2388,
+            907
+          ],
+          "name": "CB2C #1"
+        },
+        {
+          "yaw": -1725,
+          "pitch": 1050,
+          "anchor": [
+            -1594,
+            932
+          ],
+          "name": "CB2C #2"
+        },
+        {
+          "yaw": -1150,
+          "pitch": 1050,
+          "anchor": [
+            -1353,
+            943
+          ],
+          "name": "CB2C #3"
+        },
+        {
+          "yaw": -800,
+          "pitch": 1050,
+          "anchor": [
+            -1118,
+            962
+          ],
+          "name": "CB2C #4"
+        },
+        {
+          "yaw": 600,
+          "pitch": 1050,
+          "anchor": [
+            847,
+            915
+          ],
+          "name": "CB2C #5"
+        },
+        {
+          "yaw": 1275,
+          "pitch": 1050,
+          "anchor": [
+            1067,
+            937
+          ],
+          "name": "CB2C #6"
+        },
+        {
+          "yaw": 1525,
+          "pitch": 1050,
+          "anchor": [
+            1318,
+            951
+          ],
+          "name": "CB2C #7"
+        },
+        {
+          "yaw": 1900,
+          "pitch": 1050,
+          "anchor": [
+            2121,
+            887
+          ],
+          "name": "CB2C #8"
+        },
+        {
+          "yaw": 2400,
+          "pitch": 1050,
+          "anchor": [
+            2368,
+            906
+          ],
+          "name": "CB2C #9"
+        },
+        {
+          "yaw": -2475,
+          "pitch": 1650,
+          "anchor": [
+            -2644,
+            1591
+          ],
+          "name": "CB2C #10"
+        },
+        {
+          "yaw": -1975,
+          "pitch": 1650,
+          "anchor": [
+            -2421,
+            1590
+          ],
+          "name": "CB2C #11"
+        },
+        {
+          "yaw": -1725,
+          "pitch": 1650,
+          "anchor": [
+            -1556,
+            1587
+          ],
+          "name": "CB2C #12"
+        },
+        {
+          "yaw": -1150,
+          "pitch": 1650,
+          "anchor": [
+            -1361,
+            1584
+          ],
+          "name": "CB2C #13"
+        },
+        {
+          "yaw": -725,
+          "pitch": 1650,
+          "anchor": [
+            -1153,
+            1581
+          ],
+          "name": "CB2C #14"
+        },
+        {
+          "yaw": 1175,
+          "pitch": 1650,
+          "anchor": [
+            1072,
+            1582
+          ],
+          "name": "CB2C #15"
+        },
+        {
+          "yaw": 1725,
+          "pitch": 1650,
+          "anchor": [
+            1268,
+            1587
+          ],
+          "name": "CB2C #16"
+        },
+        {
+          "yaw": 1975,
+          "pitch": 1650,
+          "anchor": [
+            2151,
+            1591
+          ],
+          "name": "CB2C #17"
+        }
+      ]
+    },
+    "CB1A": {
+      "layout": "chem",
+      "targets": [
+        {
+          "yaw": -2375,
+          "pitch": 1050,
+          "anchor": [
+            -2458,
+            934
+          ],
+          "name": "CB1A #1"
+        },
+        {
+          "yaw": -1725,
+          "pitch": 1050,
+          "anchor": [
+            -2218,
+            919
+          ],
+          "name": "CB1A #2"
+        },
+        {
+          "yaw": -1400,
+          "pitch": 1050,
+          "anchor": [
+            -1446,
+            951
+          ],
+          "name": "CB1A #3"
+        },
+        {
+          "yaw": -1050,
+          "pitch": 1050,
+          "anchor": [
+            -1199,
+            937
+          ],
+          "name": "CB1A #4"
+        },
+        {
+          "yaw": -775,
+          "pitch": 1050,
+          "anchor": [
+            -950,
+            957
+          ],
+          "name": "CB1A #5"
+        },
+        {
+          "yaw": -375,
+          "pitch": 1050,
+          "anchor": [
+            -985,
+            890
+          ],
+          "name": "CB1A #6"
+        },
+        {
+          "yaw": 925,
+          "pitch": 1050,
+          "anchor": [
+            1053,
+            934
+          ],
+          "name": "CB1A #7"
+        },
+        {
+          "yaw": 1425,
+          "pitch": 1050,
+          "anchor": [
+            1292,
+            935
+          ],
+          "name": "CB1A #8"
+        },
+        {
+          "yaw": 1875,
+          "pitch": 1050,
+          "anchor": [
+            1540,
+            944
+          ],
+          "name": "CB1A #9"
+        },
+        {
+          "yaw": 2225,
+          "pitch": 1050,
+          "anchor": [
+            2311,
+            940
+          ],
+          "name": "CB1A #10"
+        },
+        {
+          "yaw": 2425,
+          "pitch": 1050,
+          "anchor": [
+            2556,
+            909
+          ],
+          "name": "CB1A #11"
+        },
+        {
+          "yaw": -2450,
+          "pitch": 1650,
+          "anchor": [
+            -2429,
+            1585
+          ],
+          "name": "CB1A #12"
+        },
+        {
+          "yaw": -1825,
+          "pitch": 1650,
+          "anchor": [
+            -2239,
+            1582
+          ],
+          "name": "CB1A #13"
+        },
+        {
+          "yaw": -1600,
+          "pitch": 1650,
+          "anchor": [
+            -1386,
+            1587
+          ],
+          "name": "CB1A #14"
+        },
+        {
+          "yaw": -1025,
+          "pitch": 1650,
+          "anchor": [
+            -1201,
+            1584
+          ],
+          "name": "CB1A #15"
+        },
+        {
+          "yaw": -475,
+          "pitch": 1650,
+          "anchor": [
+            -1017,
+            1588
+          ],
+          "name": "CB1A #16"
+        },
+        {
+          "yaw": 850,
+          "pitch": 1650,
+          "anchor": [
+            1115,
+            1590
+          ],
+          "name": "CB1A #17"
+        },
+        {
+          "yaw": 1425,
+          "pitch": 1650,
+          "anchor": [
+            1293,
+            1584
+          ],
+          "name": "CB1A #18"
+        },
+        {
+          "yaw": 1875,
+          "pitch": 1650,
+          "anchor": [
+            1512,
+            1582
+          ],
+          "name": "CB1A #19"
+        },
+        {
+          "yaw": 2250,
+          "pitch": 1650,
+          "anchor": [
+            2343,
+            1582
+          ],
+          "name": "CB1A #20"
+        }
+      ]
+    },
+    "CB1B": {
+      "layout": "chem",
+      "targets": [
+        {
+          "yaw": -2475,
+          "pitch": 1050,
+          "anchor": [
+            -2651,
+            935
+          ],
+          "name": "CB1B #1"
+        },
+        {
+          "yaw": -2075,
+          "pitch": 1050,
+          "anchor": [
+            -2399,
+            947
+          ],
+          "name": "CB1B #2"
+        },
+        {
+          "yaw": -1600,
+          "pitch": 1050,
+          "anchor": [
+            -1640,
+            953
+          ],
+          "name": "CB1B #3"
+        },
+        {
+          "yaw": -1225,
+          "pitch": 1050,
+          "anchor": [
+            -1390,
+            937
+          ],
+          "name": "CB1B #4"
+        },
+        {
+          "yaw": -875,
+          "pitch": 1050,
+          "anchor": [
+            -1144,
+            953
+          ],
+          "name": "CB1B #5"
+        },
+        {
+          "yaw": 675,
+          "pitch": 1050,
+          "anchor": [
+            868,
+            921
+          ],
+          "name": "CB1B #6"
+        },
+        {
+          "yaw": 1250,
+          "pitch": 1050,
+          "anchor": [
+            1100,
+            935
+          ],
+          "name": "CB1B #7"
+        },
+        {
+          "yaw": 1575,
+          "pitch": 1050,
+          "anchor": [
+            1349,
+            953
+          ],
+          "name": "CB1B #8"
+        },
+        {
+          "yaw": 2000,
+          "pitch": 1050,
+          "anchor": [
+            2119,
+            934
+          ],
+          "name": "CB1B #9"
+        },
+        {
+          "yaw": -2000,
+          "pitch": 1650,
+          "anchor": [
+            -2438,
+            1584
+          ],
+          "name": "CB1B #10"
+        },
+        {
+          "yaw": -1750,
+          "pitch": 1650,
+          "anchor": [
+            -1592,
+            1585
+          ],
+          "name": "CB1B #11"
+        },
+        {
+          "yaw": -1200,
+          "pitch": 1650,
+          "anchor": [
+            -1396,
+            1584
+          ],
+          "name": "CB1B #12"
+        },
+        {
+          "yaw": -675,
+          "pitch": 1650,
+          "anchor": [
+            -1208,
+            1588
+          ],
+          "name": "CB1B #13"
+        },
+        {
+          "yaw": 900,
+          "pitch": 1650,
+          "anchor": [
+            865,
+            1579
+          ],
+          "name": "CB1B #14"
+        },
+        {
+          "yaw": 1250,
+          "pitch": 1650,
+          "anchor": [
+            1099,
+            1584
+          ],
+          "name": "CB1B #15"
+        },
+        {
+          "yaw": 1975,
+          "pitch": 1650,
+          "anchor": [
+            2169,
+            1585
+          ],
+          "name": "CB1B #16"
+        },
+        {
+          "yaw": 2475,
+          "pitch": 1650,
+          "anchor": [
+            2369,
+            1584
+          ],
+          "name": "CB1B #17"
+        }
+      ]
+    },
+    "CB2A": {
+      "layout": "chem",
+      "targets": [
+        {
+          "yaw": -2100,
+          "pitch": 1050,
+          "anchor": [
+            -2392,
+            944
+          ],
+          "name": "CB2A #1"
+        },
+        {
+          "yaw": -1725,
+          "pitch": 1050,
+          "anchor": [
+            -1625,
+            943
+          ],
+          "name": "CB2A #2"
+        },
+        {
+          "yaw": -1200,
+          "pitch": 1050,
+          "anchor": [
+            -1385,
+            943
+          ],
+          "name": "CB2A #3"
+        },
+        {
+          "yaw": -825,
+          "pitch": 1050,
+          "anchor": [
+            -1146,
+            956
+          ],
+          "name": "CB2A #4"
+        },
+        {
+          "yaw": 675,
+          "pitch": 1050,
+          "anchor": [
+            865,
+            922
+          ],
+          "name": "CB2A #5"
+        },
+        {
+          "yaw": 1325,
+          "pitch": 1050,
+          "anchor": [
+            1096,
+            935
+          ],
+          "name": "CB2A #6"
+        },
+        {
+          "yaw": 1575,
+          "pitch": 1050,
+          "anchor": [
+            1344,
+            954
+          ],
+          "name": "CB2A #7"
+        },
+        {
+          "yaw": 2000,
+          "pitch": 1050,
+          "anchor": [
+            2122,
+            926
+          ],
+          "name": "CB2A #8"
+        },
+        {
+          "yaw": 2475,
+          "pitch": 1050,
+          "anchor": [
+            2368,
+            928
+          ],
+          "name": "CB2A #9"
+        },
+        {
+          "yaw": -2500,
+          "pitch": 1650,
+          "anchor": [
+            -2643,
+            1585
+          ],
+          "name": "CB2A #10"
+        },
+        {
+          "yaw": -2025,
+          "pitch": 1650,
+          "anchor": [
+            -2422,
+            1584
+          ],
+          "name": "CB2A #11"
+        },
+        {
+          "yaw": -1675,
+          "pitch": 1650,
+          "anchor": [
+            -1603,
+            1581
+          ],
+          "name": "CB2A #12"
+        },
+        {
+          "yaw": -1200,
+          "pitch": 1650,
+          "anchor": [
+            -1390,
+            1584
+          ],
+          "name": "CB2A #13"
+        },
+        {
+          "yaw": -675,
+          "pitch": 1650,
+          "anchor": [
+            -1203,
+            1587
+          ],
+          "name": "CB2A #14"
+        },
+        {
+          "yaw": 575,
+          "pitch": 1650,
+          "anchor": [
+            953,
+            1596
+          ],
+          "name": "CB2A #15"
+        },
+        {
+          "yaw": 1225,
+          "pitch": 1650,
+          "anchor": [
+            1099,
+            1584
+          ],
+          "name": "CB2A #16"
+        },
+        {
+          "yaw": 2025,
+          "pitch": 1650,
+          "anchor": [
+            2150,
+            1585
+          ],
+          "name": "CB2A #17"
+        }
+      ]
+    },
+    "F1A": {
+      "layout": "fab",
+      "targets": [
+        {
+          "yaw": -2250,
+          "pitch": 1150,
+          "anchor": [
+            -2514,
+            1019
+          ],
+          "name": "F1A #1"
+        },
+        {
+          "yaw": -1625,
+          "pitch": 1150,
+          "anchor": [
+            -1504,
+            1001
+          ],
+          "name": "F1A #2"
+        },
+        {
+          "yaw": -1275,
+          "pitch": 1150,
+          "anchor": [
+            -1242,
+            1015
+          ],
+          "name": "F1A #3"
+        },
+        {
+          "yaw": 950,
+          "pitch": 1150,
+          "anchor": [
+            965,
+            1015
+          ],
+          "name": "F1A #4"
+        },
+        {
+          "yaw": 1625,
+          "pitch": 1150,
+          "anchor": [
+            1211,
+            1000
+          ],
+          "name": "F1A #5"
+        },
+        {
+          "yaw": 2125,
+          "pitch": 1150,
+          "anchor": [
+            2249,
+            1001
+          ],
+          "name": "F1A #6"
+        },
+        {
+          "yaw": -2200,
+          "pitch": 1750,
+          "anchor": [
+            -2532,
+            1525
+          ],
+          "name": "F1A #7"
+        },
+        {
+          "yaw": -1925,
+          "pitch": 1750,
+          "anchor": [
+            -2635,
+            1537
+          ],
+          "name": "F1A #8"
+        },
+        {
+          "yaw": -1650,
+          "pitch": 1750,
+          "anchor": [
+            -1461,
+            1526
+          ],
+          "name": "F1A #9"
+        },
+        {
+          "yaw": -1225,
+          "pitch": 1750,
+          "anchor": [
+            -1556,
+            1524
+          ],
+          "name": "F1A #10"
+        },
+        {
+          "yaw": -850,
+          "pitch": 1750,
+          "anchor": [
+            -1304,
+            1526
+          ],
+          "name": "F1A #11"
+        },
+        {
+          "yaw": 775,
+          "pitch": 1750,
+          "anchor": [
+            1042,
+            1529
+          ],
+          "name": "F1A #12"
+        },
+        {
+          "yaw": 1750,
+          "pitch": 1750,
+          "anchor": [
+            1122,
+            1532
+          ],
+          "name": "F1A #13"
+        },
+        {
+          "yaw": 2350,
+          "pitch": 1750,
+          "anchor": [
+            2238,
+            1524
+          ],
+          "name": "F1A #14"
+        }
+      ]
+    },
+    "F1B": {
+      "layout": "fab",
+      "targets": [
+        {
+          "yaw": -2275,
+          "pitch": 1150,
+          "anchor": [
+            -2519,
+            1021
+          ],
+          "name": "F1B #1"
+        },
+        {
+          "yaw": -1500,
+          "pitch": 1150,
+          "anchor": [
+            -1524,
+            1018
+          ],
+          "name": "F1B #2"
+        },
+        {
+          "yaw": -850,
+          "pitch": 1150,
+          "anchor": [
+            -1278,
+            1001
+          ],
+          "name": "F1B #3"
+        },
+        {
+          "yaw": 950,
+          "pitch": 1150,
+          "anchor": [
+            958,
+            1016
+          ],
+          "name": "F1B #4"
+        },
+        {
+          "yaw": 1625,
+          "pitch": 1150,
+          "anchor": [
+            1204,
+            999
+          ],
+          "name": "F1B #5"
+        },
+        {
+          "yaw": 2100,
+          "pitch": 1150,
+          "anchor": [
+            2244,
+            999
+          ],
+          "name": "F1B #6"
+        },
+        {
+          "yaw": -2100,
+          "pitch": 1750,
+          "anchor": [
+            -2568,
+            1529
+          ],
+          "name": "F1B #7"
+        },
+        {
+          "yaw": -1625,
+          "pitch": 1750,
+          "anchor": [
+            -1478,
+            1526
+          ],
+          "name": "F1B #8"
+        },
+        {
+          "yaw": -1175,
+          "pitch": 1750,
+          "anchor": [
+            -1544,
+            1474
+          ],
+          "name": "F1B #9"
+        },
+        {
+          "yaw": 850,
+          "pitch": 1750,
+          "anchor": [
+            1006,
+            1525
+          ],
+          "name": "F1B #10"
+        },
+        {
+          "yaw": 1475,
+          "pitch": 1750,
+          "anchor": [
+            1200,
+            1522
+          ],
+          "name": "F1B #11"
+        },
+        {
+          "yaw": 2275,
+          "pitch": 1750,
+          "anchor": [
+            2244,
+            1525
+          ],
+          "name": "F1B #12"
+        }
+      ]
+    },
+    "F1C": {
+      "layout": "fab",
+      "targets": [
+        {
+          "yaw": -2250,
+          "pitch": 1150,
+          "anchor": [
+            -2514,
+            1019
+          ],
+          "name": "F1C #1"
+        },
+        {
+          "yaw": -1625,
+          "pitch": 1150,
+          "anchor": [
+            -1506,
+            1001
+          ],
+          "name": "F1C #2"
+        },
+        {
+          "yaw": -975,
+          "pitch": 1150,
+          "anchor": [
+            -1258,
+            1018
+          ],
+          "name": "F1C #3"
+        },
+        {
+          "yaw": 950,
+          "pitch": 1150,
+          "anchor": [
+            965,
+            1015
+          ],
+          "name": "F1C #4"
+        },
+        {
+          "yaw": 1625,
+          "pitch": 1150,
+          "anchor": [
+            1210,
+            1000
+          ],
+          "name": "F1C #5"
+        },
+        {
+          "yaw": 2125,
+          "pitch": 1150,
+          "anchor": [
+            2247,
+            1001
+          ],
+          "name": "F1C #6"
+        },
+        {
+          "yaw": -2275,
+          "pitch": 1600,
+          "anchor": [
+            -2512,
+            1532
+          ],
+          "name": "F1C #7"
+        },
+        {
+          "yaw": -1625,
+          "pitch": 1600,
+          "anchor": [
+            -1482,
+            1534
+          ],
+          "name": "F1C #8"
+        },
+        {
+          "yaw": -875,
+          "pitch": 1600,
+          "anchor": [
+            -1288,
+            1532
+          ],
+          "name": "F1C #9"
+        },
+        {
+          "yaw": 925,
+          "pitch": 1600,
+          "anchor": [
+            985,
+            1531
+          ],
+          "name": "F1C #10"
+        },
+        {
+          "yaw": 2150,
+          "pitch": 1600,
+          "anchor": [
+            2271,
+            1535
+          ],
+          "name": "F1C #11"
+        }
+      ]
+    }
+  },
+  "cycle_wait_minutes": 10,
+  "inventory_craft": {
+    "wait_minutes": 5,
+    "recipes": [
+      {
+        "name": "Stone Arrow",
+        "search": "stone arrow",
+        "presses": 10,
+        "enabled": true,
+        "pull_amount": "1000"
+      },
+      {
+        "name": "Bola",
+        "search": "bola",
+        "presses": 10,
+        "enabled": true,
+        "pull_amount": "1000"
+      },
+      {
+        "name": "Net Projectile",
+        "search": "net projectile",
+        "presses": 10,
+        "enabled": true,
+        "pull_amount": "1000"
+      }
+    ]
+  },
+  "layouts": {
+    "chem": {
+      "label": "Chem benches",
+      "prompt": {
+        "template": "turn_off",
+        "kind": "cyan",
+        "min": 0.78
+      },
+      "sweep_pitches": [
+        900,
+        1050,
+        1200,
+        1650,
+        1800
+      ],
+      "refs": [
+        "room_chem.npy",
+        "room_chem_day.npy"
+      ],
+      "empty_yaw": -700,
+      "ready_check": "grid_ready",
+      "search": "",
+      "item": [
+        1568,
+        372
+      ],
+      "pull_amount": "1000",
+      "craft_presses": 10,
+      "targets": [
+        {
+          "name": "A1 lo",
+          "yaw": -175,
+          "pitch": 1000
+        },
+        {
+          "name": "A1 hi",
+          "yaw": -175,
+          "pitch": 1650
+        },
+        {
+          "name": "A2 lo",
+          "yaw": 225,
+          "pitch": 1000
+        },
+        {
+          "name": "A2 hi",
+          "yaw": 225,
+          "pitch": 1650
+        },
+        {
+          "name": "A3 lo",
+          "yaw": 660,
+          "pitch": 1000
+        },
+        {
+          "name": "A3 hi",
+          "yaw": 660,
+          "pitch": 1650
+        },
+        {
+          "name": "B1 lo",
+          "yaw": 1010,
+          "pitch": 1000
+        },
+        {
+          "name": "B1 hi",
+          "yaw": 1010,
+          "pitch": 1650
+        },
+        {
+          "name": "B2 lo",
+          "yaw": 1446,
+          "pitch": 1000
+        },
+        {
+          "name": "B2 hi",
+          "yaw": 1446,
+          "pitch": 1650
+        },
+        {
+          "name": "B3 lo",
+          "yaw": 1900,
+          "pitch": 1000
+        },
+        {
+          "name": "B3 hi",
+          "yaw": 1900,
+          "pitch": 1650
+        },
+        {
+          "name": "C1 lo",
+          "yaw": 2210,
+          "pitch": 1000
+        },
+        {
+          "name": "C1 hi",
+          "yaw": 2210,
+          "pitch": 1650
+        },
+        {
+          "name": "C2 lo",
+          "yaw": 2663,
+          "pitch": 1000
+        },
+        {
+          "name": "C2 hi",
+          "yaw": 2663,
+          "pitch": 1650
+        },
+        {
+          "name": "C3 lo",
+          "yaw": 3110,
+          "pitch": 1000
+        },
+        {
+          "name": "C3 hi",
+          "yaw": 3110,
+          "pitch": 1650
+        }
+      ],
+      "recipes": [
+        {
+          "name": "Gunpowder",
+          "pull_amount": "1000",
+          "presses": 10,
+          "enabled": false,
+          "slot": [
+            1568,
+            372
+          ]
+        },
+        {
+          "name": "Sparkpowder",
+          "slot": [
+            1383,
+            372
+          ],
+          "pull_amount": "1000",
+          "presses": 10,
+          "enabled": true
+        },
+        {
+          "name": "Cementing Paste",
+          "slot": [
+            1475,
+            372
+          ],
+          "pull_amount": "1000",
+          "presses": 10,
+          "enabled": true
+        }
+      ]
+    },
+    "fab": {
+      "label": "Fabricators",
+      "prompt": {
+        "template": "turn_off",
+        "kind": "cyan",
+        "min": 0.78
+      },
+      "sweep_pitches": [
+        850,
+        1000,
+        1150,
+        1300,
+        1450,
+        1600,
+        1750,
+        1900
+      ],
+      "refs": [
+        "room_fab.npy"
+      ],
+      "ready_check": null,
+      "search": "advanced rifle",
+      "item": [
+        1290,
+        278
+      ],
+      "pull_amount": "1000",
+      "craft_presses": 10,
+      "targets": [],
+      "recipes": [
+        {
+          "name": "Advanced Rifle Bullet",
+          "pull_amount": "1000",
+          "presses": 10,
+          "enabled": true,
+          "search": "advanced rifle"
+        }
+      ]
+    }
+  },
+  "look": {
+    "down_reset_counts": 4000,
+    "chunk": 40,
+    "chunk_delay_s": 0.004,
+    "bed_search_yaws": [
+      0,
+      300,
+      -300,
+      600,
+      -600,
+      900,
+      -900,
+      1200,
+      -1200,
+      1500,
+      -1500,
+      1800,
+      -1800,
+      2100,
+      -2100,
+      2400
+    ],
+    "bed_step_back_s": [
+      0.12,
+      0.12
+    ],
+    "nudges": [
+      60,
+      120,
+      180
+    ]
+  },
+  "ui": {
+    "bed_filter": [
+      430,
+      978
+    ],
+    "bed_icon": [
+      651,
+      440
+    ],
+    "bed_travel": [
+      746,
+      976
+    ],
+    "map_close": [
+      1249,
+      95
+    ],
+    "bed_list_first": [
+      820,
+      469
+    ],
+    "bed_list_step": 50,
+    "target_search": [
+      1310,
+      183
+    ],
+    "inv_crafting_tab": [
+      610,
+      114
+    ],
+    "inv_search": [
+      200,
+      182
+    ],
+    "inv_first_slot": [
+      164,
+      278
+    ],
+    "inv_amount_box": [
+      555,
+      36
+    ],
+    "inv_pull_button": [
+      480,
+      36
+    ],
+    "inv_storage_area": [
+      117,
+      420,
+      675,
+      700
+    ],
+    "amount_box": [
+      1366,
+      36
+    ],
+    "pull_button": [
+      1440,
+      36
+    ],
+    "storage_area": [
+      1243,
+      420,
+      1800,
+      700
+    ]
+  },
+  "checks": {
+    "bed_prompt": {
+      "area": [
+        0,
+        120,
+        1840,
+        1040
+      ],
+      "kind": "cyan",
+      "min": 0.7
+    },
+    "bench_open": {
+      "x": 990,
+      "y": 90,
+      "kind": "cyan",
+      "min": 0.6,
+      "search": 8
+    },
+    "grid_ready": {
+      "x": 1734,
+      "y": 352,
+      "kind": "pixels",
+      "max_diff": 20,
+      "search": 4
+    },
+    "inv_open": {
+      "x": 116,
+      "y": 93,
+      "kind": "cyan",
+      "min": 0.6,
+      "search": 10
+    },
+    "inv_crafting": {
+      "x": 534,
+      "y": 92,
+      "kind": "cyan",
+      "min": 0.6,
+      "search": 10
+    },
+    "map_open": {
+      "x": 1224,
+      "y": 70,
+      "kind": "teal",
+      "min": 0.6,
+      "search": 8
+    }
+  },
+  "timing": {
+    "settle_after_aim_s": 0.25,
+    "craft_press_gap_s": 0.05,
+    "pull_wait_s": 2.0,
+    "search_settle_s": 0.4,
+    "bench_open_timeout_s": 6,
+    "grid_ready_timeout_s": 5,
+    "close_timeout_s": 4,
+    "map_open_timeout_s": 8,
+    "map_leave_timeout_s": 8,
+    "spawn_timeout_s": 90,
+    "spawn_settle_s": 1.5,
+    "loading_seen_timeout_s": 6,
+    "orient_min_conf": 1.2,
+    "cooldown_retry_s": 30,
+    "cooldown_give_up_min": 15,
+    "max_consecutive_failures": 4
+  },
+  "app": {
+    "start_key": 120,
+    "stop_key": 121,
+    "on_top": false,
+    "overlay": true,
+    "last_job": "inventory"
+  }
+}

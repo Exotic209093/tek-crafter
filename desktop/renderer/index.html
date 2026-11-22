@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'">
+<title>Tek Crafter</title>
+<link rel="stylesheet" href="../node_modules/@fontsource/teko/500.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/teko/600.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/exo-2/400.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/exo-2/600.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/exo-2/700.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- inline icon set -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4.5 19a1.5 1.5 0 0 0 1.3 2h12.4a1.5 1.5 0 0 0 1.3-2L14 9V3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M7 15h10l2 4.2a.8.8 0 0 1-.7 1.1H5.7a.8.8 0 0 1-.7-1.1z" fill="currentColor" opacity=".55"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm8.4 5.1-.1-3.2-2.1-.4a6.8 6.8 0 0 0-.8-1.9l1.2-1.8-2.3-2.3-1.8 1.2a6.8 6.8 0 0 0-1.9-.8L12.2 2h-3.2l-.4 2.4a6.8 6.8 0 0 0-1.9.8L4.9 4 2.6 6.3l1.2 1.8a6.8 6.8 0 0 0-.8 1.9l-2.1.4v3.2l2.1.4c.2.7.5 1.3.8 1.9l-1.2 1.8 2.3 2.3 1.8-1.2c.6.3 1.2.6 1.9.8l.4 2.1h3.2l.4-2.1c.7-.2 1.3-.5 1.9-.8l1.8 1.2 2.3-2.3-1.2-1.8c.3-.6.6-1.2.8-1.9z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M8 7V5a4 4 0 0 1 8 0v2M5 7h14l-1 14H6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 12h6" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="2" fill="currentColor"/><path d="M12 1.5v5M12 17.5v5M1.5 12h5M17.5 12h5" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-keys" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M6 10h1M9.5 10h1M13 10h1M16.5 10h1M7 14h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="7" cy="11" r="1.8" fill="currentColor"/></symbol>
+  <symbol id="i-bullet" viewBox="0 0 24 24"><path d="M10 21V10c0-4 2-7 2-7s2 3 2 7v11z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9 17h6" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z" fill="currentColor"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" fill="currentColor"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" fill="currentColor"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="3"/></symbol>
+  <symbol id="i-min" viewBox="0 0 24 24"><rect x="4" y="15" width="16" height="3" fill="currentColor"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="3"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="hexbg"></div>
+
+<!-- title bar -->
+<header class="titlebar">
+  <img class="logo" src="../assets/icon.png" alt="">
+  <div class="brand">TEK CRAFTER</div>
+  <div class="brand-sub">automated crafting</div>
+  <div class="spacer"></div>
+  <div class="hk" id="hk-hint"></div>
+  <button class="winbtn" data-win="min" title="Minimise"><svg><use href="#i-min"/></svg></button>
+  <button class="winbtn close" data-win="close" title="Close"><svg><use href="#i-x"/></svg></button>
+</header>
+
+<!-- top icon bar, like the game's inventory top row -->
+<nav class="iconbar">
+  <button class="tab active" data-tab="stations" title="Stations"><svg><use href="#i-flask"/></svg><span>Stations</span></button>
+  <button class="tab" data-tab="inventory" title="Inventory crafting"><svg><use href="#i-bag"/></svg><span>Inventory</span></button>
+  <button class="tab" data-tab="calibrate" title="Calibrate beds"><svg><use href="#i-target"/></svg><span>Calibrate</span></button>
+  <button class="tab" data-tab="settings" title="Hotkeys &amp; options"><svg><use href="#i-keys"/></svg><span>Settings</span></button>
+</nav>
+
+<main class="layout">
+  <!-- left: control panel (like the middle STRUCTURE panel) -->
+  <section class="panel control">
+    <div class="phead"><span class="on">BOT</span><span class="off">STATUS</span></div>
+    <div class="ident">
+      <div class="name" id="st-name">Tek Crafter</div>
+      <div class="owner" id="st-sub">Idle</div>
+      <div class="desc" id="st-desc">Pick a job and press START, or use your hotkey in game.</div>
+    </div>
+    <div class="statrows">
+      <div class="statrow"><svg><use href="#i-bed"/></svg><span>STATION</span><b id="r-station">–</b></div>
+      <div class="statrow"><svg><use href="#i-flask"/></svg><span>CRAFTED</span><b id="r-done">–</b></div>
+      <div class="statrow"><svg><use href="#i-target"/></svg><span>CURRENT</span><b id="r-current">–</b></div>
+      <div class="statrow"><svg><use href="#i-gear"/></svg><span>CYCLE</span><b id="r-cycle">–</b></div>
+      <div class="statrow"><svg><use href="#i-play"/></svg><span>NEXT RUN</span><b id="r-next">–</b></div>
+    </div>
+    <div class="bar"><div class="fill" id="bar-fill"></div></div>
+
+    <div class="jobpick">
+      <label class="radio"><input type="radio" name="job" value="loop" checked><span>Stations loop</span></label>
+      <label class="radio"><input type="radio" name="job" value="inventory"><span>Inventory crafting</span></label>
+    </div>
+    <div class="btnrow">
+      <button class="arkbtn go" id="btn-go"><svg><use href="#i-play"/></svg><span>START</span></button>
+      <button class="arkbtn danger" id="btn-stop"><svg><use href="#i-stop"/></svg><span>STOP</span></button>
+    </div>
+    <div class="prompt" id="prompt"></div>
+  </section>
+
+  <!-- right: tab content -->
+  <section class="panel content">
+    <!-- STATIONS -->
+    <div class="page" data-page="stations">
+      <div class="phead"><span class="on">STATIONS</span><span class="off">LOOP</span></div>
+      <p class="hint">Visited in order, forever: craft at every station, then wait. First bed is the main one, the rest are cooldown spares.</p>
+      <div id="stations"></div>
+      <div class="grid2">
+        <div class="field"><label>Wait between cycles</label><div class="suffix"><input id="f-wait" type="number" min="0" step="1"><span>min</span></div></div>
+        <div class="field"><label>Start</label>
+          <select id="f-start"></select>
+        </div>
+      </div>
+      <div class="subhead"><svg><use href="#i-flask"/></svg>CHEM BENCH RECIPES <i id="sum-chem"></i></div>
+      <p class="hint small">Crafted in this order on every bench: pull resources, then press A (each press queues 100). Click a slot to turn it on or off.</p>
+      <div class="recipes" id="rec-chem"></div>
+      <div class="btnrow left"><button class="arkbtn small" data-addrec="chem"><svg><use href="#i-plus"/></svg><span>ADD RECIPE</span></button></div>
+      <div class="subhead"><svg><use href="#i-bullet"/></svg>FABRICATOR RECIPES <i id="sum-fab"></i></div>
+      <div class="recipes" id="rec-fab"></div>
+      <div class="btnrow left"><button class="arkbtn small" data-addrec="fab"><svg><use href="#i-plus"/></svg><span>ADD RECIPE</span></button></div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="page hidden" data-page="inventory">
+      <div class="phead"><span class="on">INVENTORY</span><span class="off">CRAFTING</span></div>
+      <p class="hint">Crafts from <b>your own</b> inventory (Tab → Crafting). For each item: select it, type the pull amount and press the pull button (top-left of your inventory), then press A. Runs as its own job and never travels, because fast travel drops your items.</p>
+      <div class="recipes" id="recipes"></div>
+      <div class="btnrow left">
+        <button class="arkbtn small" id="btn-add"><svg><use href="#i-plus"/></svg><span>ADD ITEM</span></button>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Wait between rounds</label><div class="suffix"><input id="f-inv-wait" type="number" min="0" step="1"><span>min</span></div></div>
+      </div>
+    </div>
+
+    <!-- CALIBRATE -->
+    <div class="page hidden" data-page="calibrate">
+      <div class="phead"><span class="on">CALIBRATE</span><span class="off">BEDS</span></div>
+      <p class="hint">Each bed remembers where every bench is from its spawn spot. Recalibrate a bed if you move it or its benches. Takes about 5 min; hands off the mouse while it runs.</p>
+      <div class="slots" id="slots"></div>
+      <div class="btnrow left">
+        <button class="arkbtn" id="btn-cal"><svg><use href="#i-target"/></svg><span>CALIBRATE <b id="cal-name">–</b></span></button>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page hidden" data-page="settings">
+      <div class="phead"><span class="on">SETTINGS</span><span class="off">HOTKEYS</span></div>
+      <p class="hint">Hotkeys work while ARK is focused. Click a key, then press the new one (F-keys, numpad or mouse side buttons). Esc cancels.</p>
+      <div class="grid2">
+        <div class="field"><label>Start / pause</label><button class="keycap" id="k-start">F9</button></div>
+        <div class="field"><label>Stop</label><button class="keycap" id="k-stop">F10</button></div>
+      </div>
+      <label class="check big"><input type="checkbox" id="f-overlay"><span>Show progress overlay in game (top-left)</span></label>
+    </div>
+  </section>
+
+  <!-- bottom: log, styled like the in-game chat -->
+  <section class="panel log">
+    <div class="loghead">LOG</div>
+    <div class="logbody" id="log"></div>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

@@ -27,6 +27,7 @@
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="3"/></symbol>
   <symbol id="i-min" viewBox="0 0 24 24"><rect x="4" y="15" width="16" height="3" fill="currentColor"/></symbol>
   <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="3"/></symbol>
+  <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 3v8M7 6.3a7.5 7.5 0 1 0 10 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
   <symbol id="i-up" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="3"/></symbol>
   <symbol id="i-down" viewBox="0 0 24 24"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="3"/></symbol>
   <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
@@ -41,8 +42,8 @@
   <div class="brand-sub">automated crafting</div>
   <div class="spacer"></div>
   <div class="hk" id="hk-hint"></div>
-  <button class="winbtn" data-win="min" title="Minimise"><svg><use href="#i-min"/></svg></button>
-  <button class="winbtn close" data-win="close" title="Close"><svg><use href="#i-x"/></svg></button>
+  <button class="winbtn quit" data-win="quit" title="Quit Tek Crafter (stops the bot)"><svg><use href="#i-power"/></svg></button>
+  <button class="winbtn close" data-win="hide" title="Close panel (back to the game)"><svg><use href="#i-x"/></svg></button>
 </header>
 
 <!-- top icon bar, like the game's inventory top row -->
@@ -130,8 +131,9 @@
     <!-- SETTINGS -->
     <div class="page hidden" data-page="settings">
       <div class="phead"><span class="on">SETTINGS</span><span class="off">HOTKEYS</span></div>
-      <p class="hint">Hotkeys work while ARK is focused. Click a key, then press the new one (F-keys, numpad or mouse side buttons). Esc cancels.</p>
-      <div class="grid2">
+      <p class="hint">Hotkeys work in game. Click a key, then press the new one (F-keys, numpad, Insert/Home or mouse side buttons). Esc cancels.</p>
+      <div class="grid3">
+        <div class="field"><label>Open / close panel</label><button class="keycap" id="k-panel">Insert</button></div>
         <div class="field"><label>Start / pause</label><button class="keycap" id="k-start">F9</button></div>
         <div class="field"><label>Stop</label><button class="keycap" id="k-stop">F10</button></div>
       </div>

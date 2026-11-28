@@ -87,6 +87,7 @@ class Server:
         app.setdefault("start_key", 0x78)
         app.setdefault("stop_key", 0x79)
         app.setdefault("overlay", True)
+        app.setdefault("panel_key", 0x2D)   # Insert: open/close the in-game panel
         self.ctl = None
         self.worker = None
         self.job = None
@@ -110,7 +111,7 @@ class Server:
 
     def send_state(self):
         emit({"ev": "state", "config": self.cfg, "running": self.running(),
-              "keys": {k: key_name(self.cfg["app"][k]) for k in ("start_key", "stop_key")}})
+              "keys": {k: key_name(self.cfg["app"][k]) for k in ("start_key", "stop_key", "panel_key")}})
 
     # ------------------------------------------------------------ commands
     def handle(self, msg):
@@ -136,6 +137,8 @@ class Server:
             self.stop()
         elif cmd == "calibrate":
             self.calibrate(msg["bed"])
+        elif cmd == "focus_game":
+            self.focus_game()
         elif cmd == "capture_key":
             if self.running():
                 print("! stop the bot before changing hotkeys")
@@ -184,6 +187,22 @@ class Server:
             self.calib.terminate()
             print("[calibration stopped]")
 
+    def focus_game(self):
+        """Bring ARK back to the foreground after the panel closes."""
+        hwnd = user32.FindWindowW(None, self.cfg["window_title"])
+        if not hwnd:
+            return
+        fg = user32.GetForegroundWindow()
+        fg_thread = user32.GetWindowThreadProcessId(fg, None)
+        me = ctypes.windll.kernel32.GetCurrentThreadId()
+        if fg_thread and fg_thread != me:
+            user32.AttachThreadInput(me, fg_thread, True)
+            user32.SetForegroundWindow(hwnd)
+            user32.BringWindowToTop(hwnd)
+            user32.AttachThreadInput(me, fg_thread, False)
+        else:
+            user32.SetForegroundWindow(hwnd)
+
     def calibrate(self, bed):
         if self.running() or self.calibrating():
             print("! busy - stop the bot first")
@@ -223,11 +242,11 @@ class Server:
                 while is_down(vk):
                     time.sleep(0.02)
                 self.capturing = None
-                other = "stop_key" if which == "start_key" else "start_key"
+                others = [self.cfg["app"][k] for k in ("start_key", "stop_key", "panel_key") if k != which]
                 if vk == 0x1B:
                     emit({"ev": "key", "which": which, "vk": None, "name": "cancelled"})
-                elif vk == self.cfg["app"][other]:
-                    print("! that key is already used for the other action")
+                elif vk in others:
+                    print("! that key is already used for another action")
                 elif vk in GAME_KEYS:
                     print(f"! {key_name(vk)} is used by ARK/the bot - pick an F-key, numpad or mouse button")
                 else:
@@ -272,11 +291,16 @@ class Server:
                     warned = False
                 blocked_until = float("inf")   # once closed, stop checking
             if not self.capturing:
-                for which in ("start_key", "stop_key"):
+                for which in ("start_key", "stop_key", "panel_key"):
                     vk = self.cfg["app"][which]
                     down = is_down(vk)
                     if down and not was.get(vk):
-                        (self.toggle if which == "start_key" else self.stop)()
+                        if which == "panel_key":
+                            emit({"ev": "panel_toggle"})
+                        elif which == "start_key":
+                            self.toggle()
+                        else:
+                            self.stop()
                     was[vk] = down
             time.sleep(0.02)
 
@@ -292,6 +316,7 @@ class Server:
                           focused=c.title.lower() in eng.window_title().lower())
             emit(st)
             time.sleep(0.2)
+
 
     def serve(self):
         if self.hotkeys:

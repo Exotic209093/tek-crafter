@@ -13,6 +13,14 @@ See README.md for layout. Facts that aren't obvious from the code:
   the bot reads the screen (top-left inventory headers, amount boxes, item grids).
 - Text boxes: always `clear_box()` (click, End, Backspace). A click lands mid-text.
 - The live app saves `ark_chem_config.json`; don't hand-edit it while the app is open.
+- bot_server writes `logs/bot_YYYYMMDD.log` (every printed line) and `logs/health_YYYYMMDD.log`
+  (each minute: RAM/commit, ARK private memory/handles/hung flag, backend memory). Check these first
+  when an overnight run dies. ARK install is `C:\Program Files (x86)\Steam\steamapps\common\ARK`;
+  Steam `logs\content_log.txt` "346110 state changed" lines give ARK start/exit times.
+- Run loops set `Control.unattended`: when ARK loses focus mid-step, `check()` raises `FocusLost` once
+  it's back and the loop closes UI and respawns at the station; after `refocus_idle_s` without user
+  input it restores ARK itself, and failure pauses auto-resume after `auto_resume_min` idle. Any
+  window popping up overnight (scheduled tasks!) used to wreck the run this way.
 - Inventory crafting is still unverified in game (`shots/inv_debug/` holds per-step screenshots).
 
 ## Verify

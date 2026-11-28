@@ -31,8 +31,10 @@ sys.path.insert(0, str(HERE))
 import ark_chem as eng  # noqa: E402
 
 user32 = ctypes.windll.user32
+kernel32 = ctypes.windll.kernel32
 _out = sys.__stdout__
 _out_lock = threading.Lock()
+LOG_DIR = HERE / "logs"
 
 
 def emit(obj):
@@ -40,6 +42,16 @@ def emit(obj):
     with _out_lock:
         _out.write(line + "\n")
         _out.flush()
+
+
+def log_to_file(name, line):
+    """Append to logs/<name>_YYYYMMDD.log so overnight runs leave a record."""
+    try:
+        LOG_DIR.mkdir(exist_ok=True)
+        with open(LOG_DIR / f"{name}_{time.strftime('%Y%m%d')}.log", "a", encoding="utf-8") as f:
+            f.write(f"{time.strftime('%H:%M:%S')} {line}\n")
+    except OSError:
+        pass
 
 
 class LogWriter:
@@ -54,6 +66,7 @@ class LogWriter:
             line, self.buf = self.buf.split("\n", 1)
             if line.strip():
                 emit({"ev": "log", "line": line})
+                log_to_file("bot", line)
 
     def flush(self):
         pass
@@ -74,6 +87,66 @@ GAME_KEYS = {0x1B, 0x09, 0x20} | {ord(c) for c in "WASDEFCQ"}
 
 def key_name(vk):
     return KEY_NAMES.get(vk, f"Key 0x{vk:02X}")
+
+
+class _MemStatus(ctypes.Structure):
+    _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
+                ("ullTotalPhys", ctypes.c_ulonglong), ("ullAvailPhys", ctypes.c_ulonglong),
+                ("ullTotalPageFile", ctypes.c_ulonglong), ("ullAvailPageFile", ctypes.c_ulonglong),
+                ("ullTotalVirtual", ctypes.c_ulonglong), ("ullAvailVirtual", ctypes.c_ulonglong),
+                ("ullAvailExtendedVirtual", ctypes.c_ulonglong)]
+
+
+class _ProcMem(ctypes.Structure):
+    _fields_ = [("cb", ctypes.c_ulong), ("PageFaultCount", ctypes.c_ulong)] + \
+               [(n, ctypes.c_size_t) for n in (
+                   "PeakWorkingSetSize", "WorkingSetSize", "QuotaPeakPagedPoolUsage",
+                   "QuotaPagedPoolUsage", "QuotaPeakNonPagedPoolUsage", "QuotaNonPagedPoolUsage",
+                   "PagefileUsage", "PeakPagefileUsage", "PrivateUsage")]
+
+
+kernel32.OpenProcess.restype = ctypes.c_void_p
+kernel32.GetCurrentProcess.restype = ctypes.c_void_p
+kernel32.K32GetProcessMemoryInfo.argtypes = [ctypes.c_void_p, ctypes.POINTER(_ProcMem), ctypes.c_ulong]
+kernel32.GetProcessHandleCount.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ulong)]
+kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+user32.GetGuiResources.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
+user32.IsHungAppWindow.argtypes = [ctypes.c_void_p]
+user32.FindWindowW.restype = ctypes.c_void_p
+
+
+def proc_stats(h):
+    """'priv=MB ws=MB handles=N gdi=N' for an open process handle."""
+    pm = _ProcMem()
+    pm.cb = ctypes.sizeof(pm)
+    kernel32.K32GetProcessMemoryInfo(h, ctypes.byref(pm), pm.cb)
+    hc = ctypes.c_ulong()
+    kernel32.GetProcessHandleCount(h, ctypes.byref(hc))
+    return (f"priv={pm.PrivateUsage >> 20}MB ws={pm.WorkingSetSize >> 20}MB "
+            f"handles={hc.value} gdi={user32.GetGuiResources(h, 0)}")
+
+
+def health_line(title):
+    """One line: system memory, ARK process memory/hung state, this backend's memory."""
+    ms = _MemStatus()
+    ms.dwLength = ctypes.sizeof(ms)
+    kernel32.GlobalMemoryStatusEx(ctypes.byref(ms))
+    gb = 1 << 30
+    parts = [f"ram_free={ms.ullAvailPhys / gb:.1f}GB "
+             f"commit={(ms.ullTotalPageFile - ms.ullAvailPageFile) / gb:.1f}/{ms.ullTotalPageFile / gb:.1f}GB"]
+    hwnd = user32.FindWindowW(None, title)
+    if hwnd:
+        pid = ctypes.c_ulong()
+        user32.GetWindowThreadProcessId(ctypes.c_void_p(hwnd), ctypes.byref(pid))
+        h = kernel32.OpenProcess(0x1000, False, pid.value)   # PROCESS_QUERY_LIMITED_INFORMATION
+        ark = proc_stats(h) if h else "no access"
+        if h:
+            kernel32.CloseHandle(h)
+        parts.append(f"ARK[{ark} hung={bool(user32.IsHungAppWindow(hwnd))}]")
+    else:
+        parts.append("ARK[no window]")
+    parts.append(f"bot[{proc_stats(kernel32.GetCurrentProcess())}]")
+    return " ".join(parts)
 
 
 def is_down(vk):
@@ -317,11 +390,24 @@ class Server:
             emit(st)
             time.sleep(0.2)
 
+    def health_loop(self):
+        """Every minute, log memory and hung state to logs/health_*.log (diagnoses overnight freezes)."""
+        while True:
+            try:
+                line = health_line(self.cfg["window_title"])
+                if self.running():
+                    c = self.ctl
+                    line += f" bot_status={'paused' if c.paused else c.status!r}"
+                log_to_file("health", line)
+            except Exception as e:
+                log_to_file("health", f"error: {e!r}")
+            time.sleep(60)
 
     def serve(self):
         if self.hotkeys:
             threading.Thread(target=self.hotkey_loop, daemon=True).start()
         threading.Thread(target=self.status_loop, daemon=True).start()
+        threading.Thread(target=self.health_loop, daemon=True).start()
         self.send_state()
         for line in sys.stdin:
             line = line.strip().lstrip("﻿")

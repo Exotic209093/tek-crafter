@@ -15,7 +15,7 @@
         "CB1B",
         "CB1A"
       ],
-      "enabled": false
+      "enabled": true
     },
     {
       "name": "CB2",
@@ -24,7 +24,7 @@
         "CB2C",
         "CB2A"
       ],
-      "enabled": false
+      "enabled": true
     },
     {
       "name": "F1",
@@ -34,7 +34,7 @@
         "F1B",
         "F1C"
       ],
-      "enabled": false
+      "enabled": true
     }
   ],
   "bed_targets": {
@@ -1046,7 +1046,7 @@
       ]
     }
   },
-  "cycle_wait_minutes": 10,
+  "cycle_wait_minutes": 2,
   "inventory_craft": {
     "wait_minutes": 5,
     "recipes": [
@@ -1222,7 +1222,7 @@
           ],
           "pull_amount": "1000",
           "presses": 10,
-          "enabled": true
+          "enabled": false
         }
       ]
     },
@@ -1262,6 +1262,13 @@
           "presses": 10,
           "enabled": true,
           "search": "advanced rifle"
+        },
+        {
+          "name": "Electronics",
+          "pull_amount": "1000",
+          "presses": 10,
+          "enabled": false,
+          "search": "Electronics"
         }
       ]
     }
@@ -1435,6 +1442,7 @@
     "stop_key": 121,
     "on_top": false,
     "overlay": true,
-    "last_job": "inventory"
+    "last_job": "loop",
+    "panel_key": 45
   }
 }

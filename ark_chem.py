@@ -201,6 +201,8 @@ DEFAULT_CONFIG = {
         "cooldown_retry_s": 30,
         "cooldown_give_up_min": 15,
         "max_consecutive_failures": 4,
+        "refocus_idle_s": 60,            # ARK lost focus and no user input this long: bring it back (0 = off)
+        "auto_resume_min": 5,            # paused after failures and no user input this long: retry (0 = off)
     },
 }
 
@@ -344,6 +346,46 @@ def window_title():
     buf = ctypes.create_unicode_buffer(256)
     user32.GetWindowTextW(hwnd, buf, 256)
     return buf.value
+
+
+def game_focused(title):
+    """ARK is the foreground window and not minimised (fullscreen ARK can be
+    foreground yet iconic after another window stole focus)."""
+    hwnd = user32.GetForegroundWindow()
+    return title.lower() in window_title().lower() and not user32.IsIconic(hwnd)
+
+
+class _LastInput(ctypes.Structure):
+    _fields_ = [("cbSize", ctypes.c_uint), ("dwTime", ctypes.c_uint)]
+
+
+def idle_seconds():
+    """Seconds since the last keyboard/mouse input. Only meaningful while
+    the bot itself isn't sending input (waiting or paused)."""
+    li = _LastInput(ctypes.sizeof(_LastInput), 0)
+    if not user32.GetLastInputInfo(ctypes.byref(li)):
+        return 0.0
+    return ((ctypes.windll.kernel32.GetTickCount() - li.dwTime) & 0xFFFFFFFF) / 1000.0
+
+
+def focus_window(title):
+    """Restore and foreground the window with this exact title. True if found."""
+    hwnd = user32.FindWindowW(None, title)
+    if not hwnd:
+        return False
+    if user32.IsIconic(hwnd):
+        user32.ShowWindow(hwnd, 9)   # SW_RESTORE
+    fg = user32.GetForegroundWindow()
+    fg_thread = user32.GetWindowThreadProcessId(fg, None)
+    me = ctypes.windll.kernel32.GetCurrentThreadId()
+    attached = bool(fg_thread and fg_thread != me and user32.AttachThreadInput(me, fg_thread, True))
+    user32.keybd_event(0x12, 0, 0, 0)   # an Alt tap lets a background process take the foreground
+    user32.keybd_event(0x12, 0, 2, 0)
+    user32.SetForegroundWindow(hwnd)
+    user32.BringWindowToTop(hwnd)
+    if attached:
+        user32.AttachThreadInput(me, fg_thread, False)
+    return True
 
 
 def beep():
@@ -577,10 +619,19 @@ class StepFailed(Exception):
     """A step didn't reach the expected screen state."""
 
 
+class FocusLost(Exception):
+    """ARK lost focus mid-step and got it back: the step's inputs may have gone
+    elsewhere, so camera/UI state is unknown. Only raised when Control.unattended."""
+
+
 class Control:
     """Pause/stop flags for the bot. With hotkeys=True a background thread
     polls F9 (pause toggle) and F10 (stop); the desktop app passes
-    hotkeys=False and flips the flags itself."""
+    hotkeys=False and flips the flags itself.
+
+    unattended=True (set by the run loops): bring ARK back after refocus_idle_s
+    without user input, raise FocusLost once it's back, and let pause() retry
+    by itself after auto_resume_min without user input."""
 
     def __init__(self, title, paused=True, hotkeys=True):
         self.title = title
@@ -589,6 +640,9 @@ class Control:
         self.status = "starting"   # short human-readable state for the app
         self.next_run = None       # epoch seconds while waiting between cycles
         self.progress = None       # per-station counters for the overlay
+        self.unattended = False
+        self.refocus_idle_s = 0
+        self._lost_focus = False
         if hotkeys:
             threading.Thread(target=self._poll, daemon=True).start()
 
@@ -604,22 +658,50 @@ class Control:
                 print("\n[F9] paused" if self.paused else "\n[F9] running")
             time.sleep(0.03)
 
-    def pause(self, why):
+    def pause(self, why, resume_after_s=0):
         print(f"\n!! PAUSED: {why}\n   Fix it in game, then press F9 to resume (F10 to stop).")
+        if resume_after_s:
+            print(f"   Retrying by itself after {resume_after_s / 60:g} min with no keyboard/mouse input.")
         beep()
         self.paused = True
+        if resume_after_s:
+            threading.Thread(target=self._auto_resume, args=(resume_after_s,), daemon=True).start()
+
+    def _auto_resume(self, after_s):
+        # Ends as soon as anyone resumes; a later manual pause has no timer.
+        # While paused the bot sends no input, so idle time is the user's.
+        start = time.time()
+        while self.paused and not self.stopped:
+            if time.time() - start >= after_s and idle_seconds() >= after_s:
+                print(f"[auto-resume {time.strftime('%H:%M:%S')}] no input for "
+                      f"{after_s / 60:g} min; retrying")
+                self.paused = False
+                return
+            time.sleep(1)
 
     def check(self):
         warned = False
+        last_try = 0.0
         while True:
             if self.stopped:
                 raise Stop()
-            focused = self.title.lower() in window_title().lower()
+            focused = game_focused(self.title)
             if not self.paused and focused:
+                if self._lost_focus and self.unattended:
+                    self._lost_focus = False
+                    raise FocusLost()
                 return
-            if not self.paused and not focused and not warned:
-                print(f"  waiting for '{self.title}' to be the focused window...")
-                warned = True
+            if not self.paused and not focused:
+                if not warned:
+                    print(f"  waiting for '{self.title}' to be the focused window... "
+                          f"(foreground: '{window_title()}')")
+                    warned = True
+                self._lost_focus = True
+                if (self.unattended and self.refocus_idle_s and time.time() - last_try >= 5
+                        and idle_seconds() >= self.refocus_idle_s):
+                    last_try = time.time()
+                    print(f"  no input for {self.refocus_idle_s}s; bringing ARK back")
+                    focus_window(self.title)
             time.sleep(0.05)
 
     def sleep(self, seconds):
@@ -1240,6 +1322,24 @@ def cmd_run(cfg, names, autostart, here):
     run_loop(cfg, stations_from(cfg, names), here, ctl)
 
 
+def _unattended(ctl, cfg):
+    """Loops run overnight: recover from focus theft and failure pauses."""
+    ctl.unattended = True
+    ctl.refocus_idle_s = cfg["timing"].get("refocus_idle_s", 0)
+
+
+def _settle_after_focus(bot, ctl, cleanup=None):
+    """After FocusLost: let a restored fullscreen ARK redraw, then close any UI.
+    Focus lost again meanwhile just restarts the wait."""
+    while True:
+        try:
+            ctl.sleep(2)
+            (cleanup or bot.recover)()
+            return
+        except FocusLost:
+            continue
+
+
 def run_loop(cfg, stations, here, ctl):
     """The main crafting loop: visit every station, craft, wait, repeat
     forever (until ctl.stopped). Used by the CLI and the desktop app.
@@ -1258,6 +1358,7 @@ def run_loop(cfg, stations, here, ctl):
         return
     for st in stations:
         print(f"Station {st['name']}: beds {', '.join(calibrated_beds(cfg, st))}")
+    _unattended(ctl, cfg)
 
     failures = 0
     cycles = 0
@@ -1268,7 +1369,8 @@ def run_loop(cfg, stations, here, ctl):
         print(f"  ! {why} ({failures}/{limit} in a row)")
         bot.recover()
         if failures >= limit:
-            ctl.pause(f"{failures} failures in a row; last: {why}")
+            ctl.pause(f"{failures} failures in a row; last: {why}",
+                      resume_after_s=cfg["timing"].get("auto_resume_min", 0) * 60)
             failures = 0
 
     def travel(st):
@@ -1283,37 +1385,48 @@ def run_loop(cfg, stations, here, ctl):
 
     try:
         pos = 0
-        bed = here if here else travel(stations[0])
+        bed = here
         while True:
-            st = stations[pos]
-            layout = layouts[st["layout"]]
-            targets = [t for t in cfg["bed_targets"][bed]["targets"] if t.get("enabled", True)]
-            ctl.progress = {"station": st["name"], "bed": bed,
-                            "label": layout.get("label", st["layout"]),
-                            "current": "", "done": 0, "failed": 0, "visited": 0,
-                            "total": len(targets), "cycle": cycles + 1}
-            print(f"[{time.strftime('%H:%M:%S')}] {st['name']} on {bed} ({len(targets)} targets)")
-            t0 = time.time()
-            bad = bot.craft_area(layout, targets, ctl.progress)
-            print(f"  {st['name']} done in {time.time() - t0:.0f}s: "
-                  f"{len(targets) - bad}/{len(targets)} crafted")
-            if targets and bad == len(targets):
-                failed(f"nothing on {bed} could be opened")
-            else:
-                failures = 0
-            pos = (pos + 1) % len(stations)
-            if pos == 0:
-                cycles += 1
-                mins = cfg["cycle_wait_minutes"]
-                ctl.next_run = time.time() + mins * 60
-                nxt = time.strftime('%H:%M', time.localtime(ctl.next_run))
-                print(f"  cycle {cycles} done; waiting {mins:g} min (next run {nxt})")
-                ctl.status = f"waiting (cycle {cycles} done)"
-                ctl.sleep(mins * 60)
+            try:
+                # always travel, even with one station: a fresh spawn is what
+                # makes the calibrated aims line up
+                if bed is None:
+                    bed = travel(stations[pos])
+                st = stations[pos]
+                layout = layouts[st["layout"]]
+                targets = [t for t in cfg["bed_targets"][bed]["targets"] if t.get("enabled", True)]
+                ctl.progress = {"station": st["name"], "bed": bed,
+                                "label": layout.get("label", st["layout"]),
+                                "current": "", "done": 0, "failed": 0, "visited": 0,
+                                "total": len(targets), "cycle": cycles + 1}
+                print(f"[{time.strftime('%H:%M:%S')}] {st['name']} on {bed} ({len(targets)} targets)")
+                t0 = time.time()
+                bad = bot.craft_area(layout, targets, ctl.progress)
+                print(f"  {st['name']} done in {time.time() - t0:.0f}s: "
+                      f"{len(targets) - bad}/{len(targets)} crafted")
+                if targets and bad == len(targets):
+                    failed(f"nothing on {bed} could be opened")
+                else:
+                    failures = 0
+                pos = (pos + 1) % len(stations)
+                bed = None
+                if pos == 0:
+                    cycles += 1
+                    mins = cfg["cycle_wait_minutes"]
+                    ctl.next_run = time.time() + mins * 60
+                    nxt = time.strftime('%H:%M', time.localtime(ctl.next_run))
+                    print(f"  cycle {cycles} done; waiting {mins:g} min (next run {nxt})")
+                    ctl.status = f"waiting (cycle {cycles} done)"
+                    ctl.sleep(mins * 60)
+                    ctl.next_run = None
+            except FocusLost:
+                # inputs may have gone to another window mid-step: camera and UI
+                # state are unknown, so close any UI and respawn at this station
+                print(f"  ! [{time.strftime('%H:%M:%S')}] ARK lost focus mid-step; "
+                      f"resetting at {stations[pos]['name']}")
                 ctl.next_run = None
-            # always travel, even with one station: a fresh spawn is what
-            # makes the calibrated aims line up
-            bed = travel(stations[pos])
+                bed = None
+                _settle_after_focus(bot, ctl)
     except Stop:
         print("stopped")
     finally:
@@ -1332,6 +1445,7 @@ def run_inventory_loop(cfg, ctl):
         ctl.status = "stopped"
         return
     print("Inventory crafting: " + ", ".join(r["name"] for r in recipes))
+    _unattended(ctl, cfg)
     rounds = 0
     fails = 0
     limit = cfg["timing"]["max_consecutive_failures"]
@@ -1344,18 +1458,26 @@ def run_inventory_loop(cfg, ctl):
             try:
                 bot.craft_inventory(recipes, ctl.progress)
                 fails = 0
+            except FocusLost:
+                print(f"  ! [{time.strftime('%H:%M:%S')}] ARK lost focus mid-round; retrying")
+                _settle_after_focus(bot, ctl, bot.close_own_inventory)
+                continue
             except StepFailed as e:
                 fails += 1
                 print(f"  ! {e} ({fails}/{limit} in a row)")
                 bot.close_own_inventory()
                 if fails >= limit:
-                    ctl.pause(f"{fails} failures in a row; last: {e}")
+                    ctl.pause(f"{fails} failures in a row; last: {e}",
+                              resume_after_s=cfg["timing"].get("auto_resume_min", 0) * 60)
                     fails = 0
             rounds += 1
             mins = ic["wait_minutes"]
             ctl.next_run = time.time() + mins * 60
             ctl.status = f"waiting (round {rounds} done)"
-            ctl.sleep(mins * 60)
+            try:
+                ctl.sleep(mins * 60)
+            except FocusLost:
+                pass   # nothing was in progress
             ctl.next_run = None
     except Stop:
         print("stopped")

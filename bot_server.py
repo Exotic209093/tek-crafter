@@ -31,8 +31,10 @@ sys.path.insert(0, str(HERE))
 import ark_chem as eng  # noqa: E402
 
 user32 = ctypes.windll.user32
+kernel32 = ctypes.windll.kernel32
 _out = sys.__stdout__
 _out_lock = threading.Lock()
+LOG_DIR = HERE / "logs"
 
 
 def emit(obj):
@@ -40,6 +42,16 @@ def emit(obj):
     with _out_lock:
         _out.write(line + "\n")
         _out.flush()
+
+
+def log_to_file(name, line):
+    """Append to logs/<name>_YYYYMMDD.log so overnight runs leave a record."""
+    try:
+        LOG_DIR.mkdir(exist_ok=True)
+        with open(LOG_DIR / f"{name}_{time.strftime('%Y%m%d')}.log", "a", encoding="utf-8") as f:
+            f.write(f"{time.strftime('%H:%M:%S')} {line}\n")
+    except OSError:
+        pass
 
 
 class LogWriter:
@@ -54,6 +66,7 @@ class LogWriter:
             line, self.buf = self.buf.split("\n", 1)
             if line.strip():
                 emit({"ev": "log", "line": line})
+                log_to_file("bot", line)
 
     def flush(self):
         pass
@@ -76,6 +89,66 @@ def key_name(vk):
     return KEY_NAMES.get(vk, f"Key 0x{vk:02X}")
 
 
+class _MemStatus(ctypes.Structure):
+    _fields_ = [("dwLength", ctypes.c_ulong), ("dwMemoryLoad", ctypes.c_ulong),
+                ("ullTotalPhys", ctypes.c_ulonglong), ("ullAvailPhys", ctypes.c_ulonglong),
+                ("ullTotalPageFile", ctypes.c_ulonglong), ("ullAvailPageFile", ctypes.c_ulonglong),
+                ("ullTotalVirtual", ctypes.c_ulonglong), ("ullAvailVirtual", ctypes.c_ulonglong),
+                ("ullAvailExtendedVirtual", ctypes.c_ulonglong)]
+
+
+class _ProcMem(ctypes.Structure):
+    _fields_ = [("cb", ctypes.c_ulong), ("PageFaultCount", ctypes.c_ulong)] + \
+               [(n, ctypes.c_size_t) for n in (
+                   "PeakWorkingSetSize", "WorkingSetSize", "QuotaPeakPagedPoolUsage",
+                   "QuotaPagedPoolUsage", "QuotaPeakNonPagedPoolUsage", "QuotaNonPagedPoolUsage",
+                   "PagefileUsage", "PeakPagefileUsage", "PrivateUsage")]
+
+
+kernel32.OpenProcess.restype = ctypes.c_void_p
+kernel32.GetCurrentProcess.restype = ctypes.c_void_p
+kernel32.K32GetProcessMemoryInfo.argtypes = [ctypes.c_void_p, ctypes.POINTER(_ProcMem), ctypes.c_ulong]
+kernel32.GetProcessHandleCount.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ulong)]
+kernel32.CloseHandle.argtypes = [ctypes.c_void_p]
+user32.GetGuiResources.argtypes = [ctypes.c_void_p, ctypes.c_ulong]
+user32.IsHungAppWindow.argtypes = [ctypes.c_void_p]
+user32.FindWindowW.restype = ctypes.c_void_p
+
+
+def proc_stats(h):
+    """'priv=MB ws=MB handles=N gdi=N' for an open process handle."""
+    pm = _ProcMem()
+    pm.cb = ctypes.sizeof(pm)
+    kernel32.K32GetProcessMemoryInfo(h, ctypes.byref(pm), pm.cb)
+    hc = ctypes.c_ulong()
+    kernel32.GetProcessHandleCount(h, ctypes.byref(hc))
+    return (f"priv={pm.PrivateUsage >> 20}MB ws={pm.WorkingSetSize >> 20}MB "
+            f"handles={hc.value} gdi={user32.GetGuiResources(h, 0)}")
+
+
+def health_line(title):
+    """One line: system memory, ARK process memory/hung state, this backend's memory."""
+    ms = _MemStatus()
+    ms.dwLength = ctypes.sizeof(ms)
+    kernel32.GlobalMemoryStatusEx(ctypes.byref(ms))
+    gb = 1 << 30
+    parts = [f"ram_free={ms.ullAvailPhys / gb:.1f}GB "
+             f"commit={(ms.ullTotalPageFile - ms.ullAvailPageFile) / gb:.1f}/{ms.ullTotalPageFile / gb:.1f}GB"]
+    hwnd = user32.FindWindowW(None, title)
+    if hwnd:
+        pid = ctypes.c_ulong()
+        user32.GetWindowThreadProcessId(ctypes.c_void_p(hwnd), ctypes.byref(pid))
+        h = kernel32.OpenProcess(0x1000, False, pid.value)   # PROCESS_QUERY_LIMITED_INFORMATION
+        ark = proc_stats(h) if h else "no access"
+        if h:
+            kernel32.CloseHandle(h)
+        parts.append(f"ARK[{ark} hung={bool(user32.IsHungAppWindow(hwnd))}]")
+    else:
+        parts.append("ARK[no window]")
+    parts.append(f"bot[{proc_stats(kernel32.GetCurrentProcess())}]")
+    return " ".join(parts)
+
+
 def is_down(vk):
     return bool(user32.GetAsyncKeyState(vk) & 0x8000)
 
@@ -87,6 +160,7 @@ class Server:
         app.setdefault("start_key", 0x78)
         app.setdefault("stop_key", 0x79)
         app.setdefault("overlay", True)
+        app.setdefault("panel_key", 0x2D)   # Insert: open/close the in-game panel
         self.ctl = None
         self.worker = None
         self.job = None
@@ -110,7 +184,7 @@ class Server:
 
     def send_state(self):
         emit({"ev": "state", "config": self.cfg, "running": self.running(),
-              "keys": {k: key_name(self.cfg["app"][k]) for k in ("start_key", "stop_key")}})
+              "keys": {k: key_name(self.cfg["app"][k]) for k in ("start_key", "stop_key", "panel_key")}})
 
     # ------------------------------------------------------------ commands
     def handle(self, msg):
@@ -136,6 +210,8 @@ class Server:
             self.stop()
         elif cmd == "calibrate":
             self.calibrate(msg["bed"])
+        elif cmd == "focus_game":
+            self.focus_game()
         elif cmd == "capture_key":
             if self.running():
                 print("! stop the bot before changing hotkeys")
@@ -184,6 +260,22 @@ class Server:
             self.calib.terminate()
             print("[calibration stopped]")
 
+    def focus_game(self):
+        """Bring ARK back to the foreground after the panel closes."""
+        hwnd = user32.FindWindowW(None, self.cfg["window_title"])
+        if not hwnd:
+            return
+        fg = user32.GetForegroundWindow()
+        fg_thread = user32.GetWindowThreadProcessId(fg, None)
+        me = ctypes.windll.kernel32.GetCurrentThreadId()
+        if fg_thread and fg_thread != me:
+            user32.AttachThreadInput(me, fg_thread, True)
+            user32.SetForegroundWindow(hwnd)
+            user32.BringWindowToTop(hwnd)
+            user32.AttachThreadInput(me, fg_thread, False)
+        else:
+            user32.SetForegroundWindow(hwnd)
+
     def calibrate(self, bed):
         if self.running() or self.calibrating():
             print("! busy - stop the bot first")
@@ -223,11 +315,11 @@ class Server:
                 while is_down(vk):
                     time.sleep(0.02)
                 self.capturing = None
-                other = "stop_key" if which == "start_key" else "start_key"
+                others = [self.cfg["app"][k] for k in ("start_key", "stop_key", "panel_key") if k != which]
                 if vk == 0x1B:
                     emit({"ev": "key", "which": which, "vk": None, "name": "cancelled"})
-                elif vk == self.cfg["app"][other]:
-                    print("! that key is already used for the other action")
+                elif vk in others:
+                    print("! that key is already used for another action")
                 elif vk in GAME_KEYS:
                     print(f"! {key_name(vk)} is used by ARK/the bot - pick an F-key, numpad or mouse button")
                 else:
@@ -272,11 +364,16 @@ class Server:
                     warned = False
                 blocked_until = float("inf")   # once closed, stop checking
             if not self.capturing:
-                for which in ("start_key", "stop_key"):
+                for which in ("start_key", "stop_key", "panel_key"):
                     vk = self.cfg["app"][which]
                     down = is_down(vk)
                     if down and not was.get(vk):
-                        (self.toggle if which == "start_key" else self.stop)()
+                        if which == "panel_key":
+                            emit({"ev": "panel_toggle"})
+                        elif which == "start_key":
+                            self.toggle()
+                        else:
+                            self.stop()
                     was[vk] = down
             time.sleep(0.02)
 
@@ -293,10 +390,24 @@ class Server:
             emit(st)
             time.sleep(0.2)
 
+    def health_loop(self):
+        """Every minute, log memory and hung state to logs/health_*.log (diagnoses overnight freezes)."""
+        while True:
+            try:
+                line = health_line(self.cfg["window_title"])
+                if self.running():
+                    c = self.ctl
+                    line += f" bot_status={'paused' if c.paused else c.status!r}"
+                log_to_file("health", line)
+            except Exception as e:
+                log_to_file("health", f"error: {e!r}")
+            time.sleep(60)
+
     def serve(self):
         if self.hotkeys:
             threading.Thread(target=self.hotkey_loop, daemon=True).start()
         threading.Thread(target=self.status_loop, daemon=True).start()
+        threading.Thread(target=self.health_loop, daemon=True).start()
         self.send_state()
         for line in sys.stdin:
             line = line.strip().lstrip("﻿")

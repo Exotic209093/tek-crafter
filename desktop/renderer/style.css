@@ -21,8 +21,11 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; }
+html { background: transparent; }
 body {
-  background: radial-gradient(1200px 700px at 70% 20%, #0b3443 0%, var(--bg1) 40%, var(--bg0) 100%);
+  /* see-through, so the game stays visible behind the panel */
+  background: radial-gradient(1200px 700px at 70% 20%, rgba(11, 52, 67, .86) 0%, rgba(6, 32, 43, .84) 45%, rgba(3, 13, 19, .88) 100%);
+  border: 1px solid var(--line);
   color: var(--text);
   font: 14px/1.35 var(--body);
   overflow: hidden;
@@ -58,7 +61,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .winbtn svg { width: 15px; height: 15px; }
 .winbtn:hover { border-color: var(--line); background: rgba(99, 220, 249, .1); }
 .winbtn.close { border-color: var(--line); }
-.winbtn.close:hover { background: rgba(255, 91, 78, .25); color: #fff; }
+.winbtn.close:hover { background: rgba(99, 220, 249, .2); color: #fff; }
+.winbtn.quit:hover { background: rgba(255, 91, 78, .25); color: #fff; border-color: var(--red); }
 
 /* ---------- top icon bar ---------- */
 .iconbar { display: flex; gap: 8px; justify-content: center; padding: 10px 0 6px; position: relative; z-index: 1; }

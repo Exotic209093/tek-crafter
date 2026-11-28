@@ -231,6 +231,7 @@ function renderAll() {
   renderSlots();
   $("#k-start").textContent = keys.start_key;
   $("#k-stop").textContent = keys.stop_key;
+  $("#k-panel").textContent = keys.panel_key || "Insert";
   $$(".keycap").forEach((k) => k.classList.remove("wait"));
   const ov = $("#f-overlay");
   ov.checked = cfg.app.overlay !== false;
@@ -240,18 +241,23 @@ function renderAll() {
     r.checked = r.value === job;
     r.onchange = () => { cfg.app.last_job = r.value; save(); };
   });
-  $("#hk-hint").textContent = `${keys.start_key} start / pause  ·  ${keys.stop_key} stop`;
+  $("#hk-hint").textContent = `${keys.panel_key || "Insert"} panel  ·  ${keys.start_key} start / pause  ·  ${keys.stop_key} stop`;
 }
 
 // ---------------------------------------------------------------- controls
 $("#btn-go").onclick = () => {
-  if (status.running) return tek.send({ cmd: "toggle" });
+  if (status.running) {
+    tek.send({ cmd: "toggle" });
+    if (status.paused) tek.win("hide");        // resuming: back to the game
+    return;
+  }
   const job = $("input[name=job]:checked").value;
   tek.send({ cmd: "start", job, here: job === "loop" ? ($("#f-start").value || null) : null });
+  tek.win("hide");                             // the bot needs ARK focused
 };
 $("#btn-stop").onclick = () => tek.send({ cmd: "stop" });
 $("#btn-cal").onclick = () => calBed && tek.send({ cmd: "calibrate", bed: calBed });
-for (const [id, which] of [["#k-start", "start_key"], ["#k-stop", "stop_key"]]) {
+for (const [id, which] of [["#k-panel", "panel_key"], ["#k-start", "start_key"], ["#k-stop", "stop_key"]]) {
   $(id).onclick = () => {
     if (status.running) return;
     capturing = which;
@@ -347,3 +353,10 @@ tek.on((ev) => {
   }
 });
 tek.send({ cmd: "state" });
+
+// Esc closes the panel, like closing an inventory in game
+document.addEventListener("keydown", (e) => {
+  if (e.key !== "Escape" || capturing) return;
+  if (document.activeElement?.matches?.("input, select")) { document.activeElement.blur(); return; }
+  tek.win("hide");
+});
